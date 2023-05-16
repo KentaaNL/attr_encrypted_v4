@@ -1,18 +1,21 @@
 # attr_encrypted
 
-[![Build Status](https://app.travis-ci.com/attr-encrypted/attr_encrypted.svg?branch=master)](https://travis-ci.org/attr-encrypted/attr_encrypted) [![Test Coverage](https://codeclimate.com/github/attr-encrypted/attr_encrypted/badges/coverage.svg)](https://codeclimate.com/github/attr-encrypted/attr_encrypted/coverage) [![Code Climate](https://codeclimate.com/github/attr-encrypted/attr_encrypted/badges/gpa.svg)](https://codeclimate.com/github/attr-encrypted/attr_encrypted) [![Gem Version](https://badge.fury.io/rb/attr_encrypted.svg)](https://badge.fury.io/rb/attr_encrypted)
+[![Build Status](https://github.com/KentaaNL/attr_encrypted_v4/actions/workflows/test.yml/badge.svg)](https://github.com/KentaaNL/attr_encrypted_v4/actions)
 
 Generates attr_accessors that transparently encrypt and decrypt attributes.
 
 It works with ANY class, however, you get a few extra features when you're using it with `ActiveRecord` or `Sequel`.
 
+Forked from [attr-encrypted/attr_encrypted](https://github.com/attr-encrypted/attr_encrypted) with the following fixes:
+
+* Optional update encrypted attributes only when values changed  (#1)
 
 ## Installation
 
 Add attr_encrypted to your gemfile:
 
 ```ruby
-  gem "attr_encrypted"
+  gem "attr_encrypted", github: "KentaaNL/attr_encrypted_v4"
 ```
 
 Then install the gem:
@@ -152,7 +155,8 @@ The following are the default options used by `attr_encrypted`:
   decrypt_method:    'decrypt',
   mode:              :per_attribute_iv,
   algorithm:         'aes-256-gcm',
-  allow_empty_value: false
+  allow_empty_value: false,
+  update_unchanged:  true
 ```
 
 All of the aforementioned options are explained in depth below.
@@ -326,6 +330,16 @@ You may want to encrypt empty strings or nil so as to not reveal which records a
 ```ruby
   class User
     attr_encrypted :credentials, key: 'some secret key', marshal: true, allow_empty_value: true
+  end
+```
+
+### The `:update_unchanged` option
+
+You may want to only update changed attributes each time the record is saved.
+
+```ruby
+  class User
+    attr_encrypted :email, key: 'some secret key', marshal: true, update_unchanged: false
   end
 ```
 
